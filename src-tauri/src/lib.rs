@@ -16,7 +16,8 @@ use tauri::menu::{
 };
 use tauri::tray::{TrayIcon, TrayIconBuilder};
 use tauri::{
-    AppHandle, Emitter, Manager, PhysicalPosition, RunEvent, WebviewUrl, WebviewWindowBuilder, Wry,
+    AppHandle, Emitter, Manager, PhysicalPosition, RunEvent, WebviewUrl, WebviewWindow,
+    WebviewWindowBuilder, Wry,
 };
 use tauri_plugin_dialog::{DialogExt, MessageDialogKind};
 use tauri_plugin_opener::OpenerExt;
@@ -79,6 +80,7 @@ impl OverlayUi {
         }
         if let Some(w) = self.0.get_webview_window("overlay") {
             if visible {
+                place_overlay(&w);
                 let _ = w.show();
                 // Click-through. Only after show(): on Linux the native window does not exist before.
                 let _ = w.set_ignore_cursor_events(true);
@@ -123,7 +125,7 @@ impl session::Ui for OverlayUi {
 }
 
 fn create_overlay(app: &AppHandle) -> tauri::Result<()> {
-    let w = WebviewWindowBuilder::new(app, "overlay", WebviewUrl::App("overlay.html".into()))
+    WebviewWindowBuilder::new(app, "overlay", WebviewUrl::App("overlay.html".into()))
         .title("voicecode")
         .inner_size(OVERLAY_W, OVERLAY_H)
         .decorations(false)
@@ -135,14 +137,19 @@ fn create_overlay(app: &AppHandle) -> tauri::Result<()> {
         .focused(false)
         .focusable(false)
         .build()?;
-    if let Some(m) = w.primary_monitor()? {
+    Ok(())
+}
+
+/// Bottom center of the primary monitor. Called before every show: GTK forgets the position
+/// of a hidden window, and GNOME then puts it at the top left of the screen.
+fn place_overlay(w: &WebviewWindow) {
+    if let Ok(Some(m)) = w.primary_monitor() {
         let scale = m.scale_factor();
         let (mw, mh) = (m.size().width as f64, m.size().height as f64);
         let x = m.position().x as f64 + (mw - OVERLAY_W * scale) / 2.0;
         let y = m.position().y as f64 + mh - (OVERLAY_H + 80.0) * scale;
-        w.set_position(PhysicalPosition::new(x as i32, y as i32))?;
+        let _ = w.set_position(PhysicalPosition::new(x as i32, y as i32));
     }
-    Ok(())
 }
 
 // ---------- sessions ----------
