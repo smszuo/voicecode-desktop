@@ -1,0 +1,5 @@
+# Rust build output (src-tauri/.gitignore covers target/ and gen/ too)
+target/
+.DS_Store
+core
+core.[0-9]*

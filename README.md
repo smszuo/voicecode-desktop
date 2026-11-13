@@ -2,7 +2,7 @@
 
 Cross-platform version of voicecode for **Windows, macOS, and Linux (X11)**. Hold the
 push-to-talk key, speak, release: each final transcript is typed into the focused window.
-Same behavior and settings file as the Python client in the repo root.
+Same behavior and settings file as the Python Linux client (the `voicecode` repo).
 
 ## Install
 
@@ -47,10 +47,10 @@ Needs Rust (stable) and, on Linux, the Tauri system packages:
 ```sh
 sudo apt install libwebkit2gtk-4.1-dev libayatana-appindicator3-dev librsvg2-dev \
                  libasound2-dev libxdo-dev libx11-dev
-cd desktop/src-tauri
+cd src-tauri
 cargo test                                  # config, resampler, session vs. a fake server
 cargo run                                   # run the app
-npx @tauri-apps/cli@2 build                 # installers in target/release/bundle/ (run in desktop/)
+npx @tauri-apps/cli@2 build                 # installers in src-tauri/target/release/bundle/ (run in the repo root)
 ```
 
 | Path | Contents |
