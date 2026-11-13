@@ -82,6 +82,10 @@ jobs:
           path: dist
           merge-multiple: true
       # find: artifacts keep subfolders (deb/, msi/, ...) except the macOS one.
-      - run: gh release create "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" --generate-notes $(find dist -type f)
+      # Reuse a release made by hand in the GitHub UI or by an earlier run attempt.
+      - run: |
+          gh release view "$GITHUB_REF_NAME" > /dev/null 2>&1 || gh release create "$GITHUB_REF_NAME" --generate-notes
+          gh release upload "$GITHUB_REF_NAME" --clobber $(find dist -type f)
         env:
           GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
