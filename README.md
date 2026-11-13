@@ -6,8 +6,9 @@ Same behavior and settings file as the Python Linux client (the `voicecode` repo
 
 ## Install
 
-Download the installer for your OS from the latest CI run (artifact `voicecode-desktop-<OS>`):
-`.msi`/`.exe` (Windows), `.dmg` (macOS), `.AppImage`/`.deb` (Linux).
+Download the installer for your OS from the
+[latest release](https://github.com/smszuo/voicecode-desktop/releases/latest):
+`.msi`/`.exe` (Windows), `.dmg` (macOS, Apple Silicon), `.AppImage`/`.deb` (Linux).
 
 Then set the API key and the default endpoint as environment variables:
 
@@ -61,6 +62,9 @@ npx @tauri-apps/cli@2 build                 # installers in src-tauri/target/rel
 | `src-tauri/src/config.rs` | settings file, endpoint validation, vocabulary |
 | `src-tauri/src/lib.rs` | tray, overlay, settings window, startup |
 | `ui/` | overlay and settings pages (plain HTML, no build step) |
+
+To release: set `version` in `src-tauri/Cargo.toml`, commit, then `git tag v<version> && git push origin v<version>`.
+CI tests, builds all three OSes, and publishes a GitHub release with the installers.
 
 ## Limits
 
